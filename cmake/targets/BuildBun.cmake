@@ -771,7 +771,7 @@ set(NODEJS_HEADERS_PATH ${VENDOR_PATH}/nodejs)
 
 register_command(
   TARGET
-    bun-node-headers
+    bun-node-headers-download
   COMMENT
     "Download node ${NODEJS_VERSION} headers"
   COMMAND
@@ -779,12 +779,24 @@ register_command(
       -DDOWNLOAD_PATH=${NODEJS_HEADERS_PATH}
       -DDOWNLOAD_URL=https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-headers.tar.gz
       -P ${CWD}/cmake/scripts/DownloadUrl.cmake
+  OUTPUTS
+    ${NODEJS_HEADERS_PATH}/include/node/node_version.h
+)
+
+register_command(
+  TARGET
+    bun-node-headers
+  COMMENT
+    "Prepare node ${NODEJS_VERSION} headers"
+  TARGETS
+    bun-node-headers-download
   COMMAND
     ${CMAKE_COMMAND}
       -DNODE_INCLUDE_DIR=${NODEJS_HEADERS_PATH}/include
       -P ${CWD}/cmake/scripts/PrepareNodeHeaders.cmake
-  OUTPUTS
+  SOURCES
     ${NODEJS_HEADERS_PATH}/include/node/node_version.h
+  OUTPUTS
     ${NODEJS_HEADERS_PATH}/include/.node-headers-prepared
 )
 

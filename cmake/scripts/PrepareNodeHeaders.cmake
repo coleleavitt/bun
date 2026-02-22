@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.24)
+
 # This script prepares Node.js headers for use with Bun
 # It removes conflicting OpenSSL and libuv headers since Bun uses BoringSSL and its own libuv
 

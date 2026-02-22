@@ -64,6 +64,7 @@ if(UNIX)
       /usr/lib/llvm-${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}/bin
       /usr/lib/llvm-${LLVM_VERSION_MAJOR}/bin
       /usr/lib/llvm${LLVM_VERSION_MAJOR}/bin
+      /usr/lib/llvm/${LLVM_VERSION_MAJOR}/bin
     )
   endif()
 endif()

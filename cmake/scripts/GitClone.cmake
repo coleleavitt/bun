@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.24)
+
 get_filename_component(SCRIPT_NAME ${CMAKE_CURRENT_LIST_FILE} NAME)
 message(STATUS "Running script: ${SCRIPT_NAME}")
 
