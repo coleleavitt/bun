@@ -233,7 +233,7 @@ Worker::~Worker()
 
 ExceptionOr<void> Worker::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
-    if (m_terminationFlags & TerminatedFlag)
+    if (m_terminationFlags & (TerminatedFlag | TerminateRequestedFlag))
         return Exception { InvalidStateError, "Worker has been terminated"_s };
 
     Vector<RefPtr<MessagePort>> ports;
