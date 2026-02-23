@@ -1121,6 +1121,9 @@ bool isSignalName(WTF::String input)
     return signalNameToNumberMap->contains(input);
 }
 
+
+extern "C" void bun_restore_stdio();
+
 extern "C" void Bun__onSignalForJS(int signalNumber, Zig::GlobalObject* globalObject)
 {
     Process* process = globalObject->processObject();
@@ -1156,6 +1159,23 @@ extern "C" void Bun__onSignalForJS(int signalNumber, Zig::GlobalObject* globalOb
             return;
         }
 
+        // Restore terminal state before re-raising (matches onExitSignal behavior).
+        bun_restore_stdio();
+
+        // Reset Bun's crash handler signals (SIGSEGV, SIGBUS, SIGILL, SIGFPE) to
+        // SIG_DFL before re-raising. Without this, Worker threads that encounter a
+        // fault during process teardown would trigger the crash handler's backtrace()
+        // call, which is not async-signal-safe and can segfault in _Unwind_Find_FDE().
+        {
+            struct sigaction reset;
+            memset(&reset, 0, sizeof(reset));
+            reset.sa_handler = SIG_DFL;
+            sigemptyset(&reset.sa_mask);
+            sigaction(SIGSEGV, &reset, nullptr);
+            sigaction(SIGBUS, &reset, nullptr);
+            sigaction(SIGILL, &reset, nullptr);
+            sigaction(SIGFPE, &reset, nullptr);
+        }
         struct sigaction sa;
         memset(&sa, 0, sizeof(sa));
         sa.sa_handler = SIG_DFL;
