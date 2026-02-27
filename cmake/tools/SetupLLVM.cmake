@@ -12,7 +12,7 @@ if(NOT ENABLE_LLVM)
   return()
 endif()
 
-set(DEFAULT_LLVM_VERSION "21.1.8")
+set(DEFAULT_LLVM_VERSION "22.1.0")
 
 optionx(LLVM_VERSION STRING "The version of LLVM to use" DEFAULT ${DEFAULT_LLVM_VERSION})
 
@@ -64,6 +64,7 @@ if(UNIX)
       /usr/lib/llvm-${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}/bin
       /usr/lib/llvm-${LLVM_VERSION_MAJOR}/bin
       /usr/lib/llvm${LLVM_VERSION_MAJOR}/bin
+      /usr/lib/llvm/${LLVM_VERSION_MAJOR}/bin
     )
   endif()
 endif()

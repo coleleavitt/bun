@@ -782,11 +782,8 @@ register_command(
     ${CMAKE_COMMAND}
       -DDOWNLOAD_PATH=${NODEJS_HEADERS_PATH}
       -DDOWNLOAD_URL=https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-headers.tar.gz
-      -P ${CWD}/cmake/scripts/DownloadUrl.cmake
-  COMMAND
-    ${CMAKE_COMMAND}
       -DNODE_INCLUDE_DIR=${NODEJS_HEADERS_PATH}/include
-      -P ${CWD}/cmake/scripts/PrepareNodeHeaders.cmake
+      -P ${CWD}/cmake/scripts/DownloadAndPrepareNodeHeaders.cmake
   OUTPUTS
     ${NODEJS_HEADERS_PATH}/include/node/node_version.h
     ${NODEJS_HEADERS_PATH}/include/.node-headers-prepared
@@ -948,6 +945,7 @@ endif()
 
 target_compile_definitions(${bun} PRIVATE
   _HAS_EXCEPTIONS=0
+  HWY_HAVE_EVEX512=0
   LIBUS_USE_OPENSSL=1
   LIBUS_USE_BORINGSSL=1
   WITH_BORINGSSL=1
@@ -1338,6 +1336,13 @@ endif()
 
 if(LINUX)
   target_link_libraries(${bun} PRIVATE c pthread dl)
+
+  if(WEBKIT_LOCAL)
+    find_library(BUN_LIBBACKTRACE backtrace PATHS /usr/local/lib)
+    if(BUN_LIBBACKTRACE)
+      target_link_libraries(${bun} PRIVATE ${BUN_LIBBACKTRACE})
+    endif()
+  endif()
 
   if(USE_STATIC_LIBATOMIC)
     target_link_libraries(${bun} PRIVATE libatomic.a)
